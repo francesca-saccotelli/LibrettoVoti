@@ -2,7 +2,9 @@ package it.polito.tdp.libretto.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+//import java.util.Iterator;
 import java.util.List;
+import java.util.*;
 
 /**
  * Memorizza e gestisce un insieme di voti superati.
@@ -11,6 +13,17 @@ import java.util.List;
  *
  */
 public class Libretto {
+	
+	//nested private class
+	private class ConfrontaPerVoto implements Comparator<Voto>{
+
+		@Override
+		public int compare(Voto o1, Voto o2) {
+			
+			return o2.getVoto()-o1.getVoto();
+		}
+		
+	}
 
 	private List<Voto> voti = new ArrayList<>();
 	
@@ -186,17 +199,45 @@ public class Libretto {
 	 */
 	public void ordinaPerCorso() {
 		Collections.sort(this.voti) ;
+		//this.voti.sort(null);
 	}
 	
 	public void ordinaPerVoto() {
 		Collections.sort(this.voti, new ConfrontaVotiPerValutazione());
-//		this.voti.sort(new ConfrontaVotiPerValutazione());
+
+		//Comparator definito con anonymous inline class
+		this.voti.sort(new Comparator<Voto>() {
+            @Override
+			public int compare(Voto o1, Voto o2) {
+				return o2.getVoto()-o1.getVoto();
+			}
+			
+		});
+		
+		//Comparator definito con una "lambda function"
+		this.voti.sort((Voto o1,Voto o2) -> (o2.getVoto()-o1.getVoto()));
+		
+		//Comparator definito con nested class
+		this.voti.sort(new ConfrontaPerVoto());
+		
+		
+		
+		//		this.voti.sort(new ConfrontaVotiPerValutazione());
 	}
 
 	/**
 	 * Elimina dal libretto tutti i voti <24
 	 */
 	public void cancellaVotiScarsi() {
+		
+		//Alternativa : utilizzare gli iteratori
+		/*Iterator<Voto>iter=this.voti.iterator();
+		while(iter.hasNext()) {
+			Voto v=iter.next();
+			if(v.getVoto()<24)
+				iter.remove();
+		}*/
+		
 		List<Voto> daRimuovere=new ArrayList<>() ;
 		for(Voto v: this.voti) {
 			if(v.getVoto()<24) {
